@@ -43,7 +43,7 @@ const App = () => {
   };
 
   return (
-    <div className=" min-h-screen bg-gradient-to-br  from-gray-900 overflow-hidden to-black text-white p-6 flex items-center justify-center">
+    <div className=" min-h-screen min-w-screen     bg-gradient-to-br  from-gray-900 overflow-hidden  via-neutral-500 to-black text-white p-6 flex items-center justify-center">
       <div className="w-full max-w-4xl rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 p-8 shadow-2xl">
         <h1 className="text-3xl font-bold text-center text-white mb-6">
           🚆 IRCTC PNR Status
