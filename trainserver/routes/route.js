@@ -1,12 +1,12 @@
 import express from 'express';
 import login from '../controller/login.js';
 import signup from '../controller/signup.js';
-import search from '../controller/search.js';
-
+import getTrainData from '../controller/trainsearch.js';
 const router = express.Router();
 
 router.post('/api/login',login);
 router.post('/api/signup',signup);
-router.post('/api/search',search);
+router.get('/api/train',getTrainData);
+
 
 export default router;  

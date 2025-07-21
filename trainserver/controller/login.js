@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import User from "../models/usersignup.js"; 
+import User from "../model/user.js";
+
 const JWT_SECRET = "your_jwt_secret"; 
 
 const login = async (req, res) => {
@@ -27,7 +28,7 @@ const login = async (req, res) => {
       },
       JWT_SECRET,
       {
-        expiresIn: "14d", 
+        expiresIn: "4d", 
       }
     );
 
