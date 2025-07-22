@@ -25,6 +25,7 @@ const login = async (req, res) => {
         id: user._id,
         email,
         user_id: user.user_id,
+        
       },
       JWT_SECRET,
       {
@@ -38,6 +39,7 @@ const login = async (req, res) => {
         id: user._id,
         user_id: user.user_id,
         email: user.email,
+        name: user.name,
       }
     });
   } catch (error) {

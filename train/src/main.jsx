@@ -14,7 +14,7 @@ import TrainDetails from './components/navbar/Traindetails.jsx';
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <StrictMode>
-      <div className="min-h-screen  w-screen overflow-hidden bg-gradient-to-br from-gray-600 via-black-700 to-black">
+  
         <Routes>
           <Route element={<ProtectedRoute  />}>
             <Route path='/pnr' element={<Pnrsearch />} />
@@ -25,9 +25,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<Signup />} />
           </Route>
-
         </Routes>
-      </div>
     </StrictMode>
   </BrowserRouter>
 );

@@ -7,7 +7,7 @@ function TrainDetails() {
   if (!train) return <div className="text-white p-6">No train data found</div>;
 
   return (
-    <div className=" bg-gradient-to-br from-gray-900 to-black text-white p-6 overflow-x-hidden">
+    <div className=" max-w-screen min-h-screen pt-20 items-center bg-gradient-to-br from-gray-900 to-black text-white p-6 overflow-x-hidden">
       <h1 className="text-3xl font-bold text-center">
         {train.train_name} ({train.train_no})
       </h1>
