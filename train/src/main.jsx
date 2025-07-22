@@ -10,6 +10,7 @@ import PublicRoute from './PublicRoute.jsx';
 import Home from './components/navbar/Home.jsx';
 import Navbar from './components/navbar/Navbar.jsx';
 import TrainDetails from './components/navbar/Traindetails.jsx';
+import Trainswap from './components/navbar/Trainswap.jsx';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/pnr' element={<Pnrsearch />} />
             <Route path='/' element={<Home />} />
             <Route path='/traindetails' element={<TrainDetails />} />
+            <Route path='/traindetails/trainswap' element={<Trainswap />} />
           </Route>
           <Route element={<PublicRoute />}>
             <Route path='/login' element={<Login />} />
