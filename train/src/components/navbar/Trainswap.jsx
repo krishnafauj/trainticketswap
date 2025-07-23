@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import API from '../../utils/Axios';
+
 function Trainswap() {
+  const navigate= useNavigate();
   const { state } = useLocation();
   const { trainname, trainno, route } = state || {};
 
@@ -63,6 +65,9 @@ function Trainswap() {
     
       const data = response.data; // ✅ no .json()
       console.log('Response:', data);
+      alert('request submitted')
+      navigate('/')
+
     } catch (error) {
       console.error('Error during API call:', error.response?.data || error.message);
     }

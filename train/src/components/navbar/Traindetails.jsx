@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-
+import { MessageCircle } from 'lucide-react';
+import API from '../../utils/Axios';
 function TrainDetails() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -22,20 +22,20 @@ function TrainDetails() {
         const fetchSwaps = async () => {
             setLoading(true);
             try {
-              const res = await API.get('/trainswap/train', {
-                params: {
-                  train_no: train.train_no,
-                  date: selectedDate,
-                },
-              });
-              setSwapRequests(res.data?.requests || []);
+                const res = await API.get('/trainswap/train', {
+                    params: {
+                        train_no: train.train_no,
+                        date: selectedDate,
+                    },
+                });
+                setSwapRequests(res.data?.requests || []);
             } catch (error) {
-              console.error('Failed to fetch swap requests:', error.response?.data || error.message);
-              setSwapRequests([]);
+                console.error('Failed to fetch swap requests:', error.response?.data || error.message);
+                setSwapRequests([]);
             } finally {
-              setLoading(false);
+                setLoading(false);
             }
-          };
+        };
 
         fetchSwaps();
     }, [selectedDate, train]);
@@ -103,21 +103,30 @@ function TrainDetails() {
 
                     {/* Swap Requests */}
                     <div>
-                        <h2 className="text-xl font-semibold mb-2 text-green-400">Seat Swap Requests</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-green-400">Seat Swap Requests</h2>
+
                         {loading ? (
                             <p className="text-gray-300">Loading requests...</p>
                         ) : swapRequests.length === 0 ? (
-                            <p className="text-gray-300"> 📅 Please try selecting a previous date — this train may have long route swaps on earlier days.</p>
+                            <p className="text-gray-300">
+                                📅 Please try selecting a previous date — this train may have long route swaps on earlier days.
+                            </p>
                         ) : (
-                            <div className="space-y-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {swapRequests.map((req, idx) => (
                                     <div
                                         key={idx}
-                                        className="bg-gray-800 p-4 rounded-lg border border-white/10 shadow"
+                                        onClick={() => console.log('Clicked request:', req)}
+                                        className="relative cursor-pointer bg-gray-800 p-4 rounded-xl border border-white/10 shadow hover:bg-gray-700 transition-all duration-200"
                                     >
+                                        {/* Message icon in top-right */}
+                                        <span onClick={()=>{navigate('/')}}>
+                                            <MessageCircle className="absolute top-3 right-3 text-blue-400 hover:text-blue-600" size={20} />
+
+                                        </span>
                                         <p className="text-white font-semibold">{req.name} ({req.age} yrs)</p>
                                         <p className="text-sm text-gray-300">
-                                            {req.from} ➡️ {req.to} | Seat: {req.seat} | Berth: {req.berth}
+                                            {req.from} {req.from_station} ➡️ {req.to} {req.to_statin} |<br></br> Seat: {req.seat} | Berth: {req.berth}
                                         </p>
                                         <p className="text-sm text-blue-400 mt-1">Reason: {req.reason}</p>
                                     </div>
@@ -127,12 +136,7 @@ function TrainDetails() {
                     </div>
 
                     {/* 🔗 API Info */}
-                    <div>
-                        <h2 className="text-xl font-semibold mb-2">API Endpoint</h2>
-                        <p className="text-sm text-gray-400">
-                            GET `/api/swaps?train_no={train.train_no}&date={selectedDate}`
-                        </p>
-                    </div>
+
                 </div>
             </div>
         </div>

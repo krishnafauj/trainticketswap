@@ -6,6 +6,10 @@ const trainSwapRequestSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  train_no: {
+    type: String,
+    required: true
+  },
   pnr: String,
   name: String,
   age: String,
@@ -18,10 +22,15 @@ const trainSwapRequestSchema = new mongoose.Schema({
   seat: String,
   berth: String,
   berth_pref: String,
+  deletion_at: Date, // ✅ required for TTL to work
 }, { timestamps: true });
 
+// ✅ TTL index
+trainSwapRequestSchema.index({ deletion_at: 1 }, { expireAfterSeconds: 0 });
+
 export default function getSwapModelByTrainNo(trainno) {
-  const bucket = String(trainno)[0]; // '1', '2', '3'...
+  
+  const bucket = String(trainno)[0]; // '1', '2', '3', ...
   const collectionName = `train_swap_requests_${bucket}`;
 
   if (mongoose.models[collectionName]) {
