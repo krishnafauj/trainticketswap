@@ -2,9 +2,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../model/user.js";
 
-const JWT_SECRET = "your_jwt_secret"; 
 
 const login = async (req, res) => {
+  const JWT_SECRET = process.env.JWT_SECRET;
   try {
     const { email, password } = req.body;
 
@@ -17,7 +17,6 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid password" });
     }
-
 
     console.log(user.user_id);
     const token = jwt.sign(
@@ -32,7 +31,6 @@ const login = async (req, res) => {
         expiresIn: "4d", 
       }
     );
-
     res.status(200).json({
       message: "Login Successful",token, user: 
       {

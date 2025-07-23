@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-
+import API from '../../utils/Axios';
 function Trainswap() {
   const { state } = useLocation();
   const { trainname, trainno, route } = state || {};
@@ -15,15 +15,34 @@ function Trainswap() {
     to: '',
     date: today,
     reason: '',
+    to_statin: '',
+    from_station: '',
     seat: '',
     berth: '',
     berth_pref: '',
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const { name, value } = e.target;
 
+    if (name === "from") {
+      const station = route.find(s => s.station_name === value);
+      setFormData({
+        ...formData,
+        from: value,
+        from_station: station?.departure || '',
+      });
+    } else if (name === "to") {
+      const station = route.find(s => s.station_name === value);
+      setFormData({
+        ...formData,
+        to: value,
+        to_statin: station?.arrival || '',
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -35,29 +54,20 @@ function Trainswap() {
     const requestData = {
       ...formData,
       trainname,
-      trainno,
+      train_no: trainno 
     };
 
     try {
-        console.log('Sending request with data:', requestData);
-      const response = await fetch('https://your-api-url.com/api/train-swap', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      if (response.ok) {
-        alert('Swap request submitted successfully!');
-        // You can reset form here if needed
-      } else {
-        alert('Failed to submit request.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Error sending request');
+      console.log('Sending request with data:', requestData);
+      const response = await API.post('/trainswap', requestData);
+    
+      const data = response.data; // ✅ no .json()
+      console.log('Response:', data);
+    } catch (error) {
+      console.error('Error during API call:', error.response?.data || error.message);
     }
+    
+
   };
 
   return (

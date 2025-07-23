@@ -22,20 +22,20 @@ function TrainDetails() {
         const fetchSwaps = async () => {
             setLoading(true);
             try {
-                const res = await axios.get('https://your-backend.com/api/swaps', {
-                    params: {
-                        train_no: train.train_no,
-                        date: selectedDate,
-                    },
-                });
-                setSwapRequests(res.data || []);
+              const res = await API.get('/trainswap/train', {
+                params: {
+                  train_no: train.train_no,
+                  date: selectedDate,
+                },
+              });
+              setSwapRequests(res.data?.requests || []);
             } catch (error) {
-                console.error('Failed to fetch swap requests:', error);
-                setSwapRequests([]);
+              console.error('Failed to fetch swap requests:', error.response?.data || error.message);
+              setSwapRequests([]);
             } finally {
-                setLoading(false);
+              setLoading(false);
             }
-        };
+          };
 
         fetchSwaps();
     }, [selectedDate, train]);
