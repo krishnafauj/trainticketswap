@@ -6,7 +6,6 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd()); // Load correct .env file
   const backendUrl = env.VITE_BACKEND_URL;
-
   return {
     plugins: [react(), tailwindcss()],
     server: {
