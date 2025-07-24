@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import Navbar from './components/navbar/Navbar';
 import { usePageTracking } from './utils/UserPageTracking';
+import CookieConsentBanner from './components/navbar/CookieConsentBanner';
 
 function ProtectedRoute() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function ProtectedRoute() {
       <main className="">
         <Outlet />
       </main>
+      <CookieConsentBanner />
     </div>
   );
 }
