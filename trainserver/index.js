@@ -12,11 +12,7 @@ const app = express();
 const { trainConnection } = await connectDB();
 const trainDB = trainConnection.db;
 app.locals.trainDB = trainDB; 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://trainticketswap.vercel.app',
-];
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+
 app.use(express.json());
 
 // ✅ Routes after DB
@@ -25,7 +21,7 @@ app.use('/', router); // ✅ Don't move this above the DB connection
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 initSocketServer(server);
-const HOST = '0.0.0.0'; // ✅ Required for Render
-server.listen(PORT, HOST, () => {
-  console.log(`Server running on http://${HOST}:${PORT}`);
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
