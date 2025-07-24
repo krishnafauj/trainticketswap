@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import Navbar from './components/navbar/Navbar';
+import { usePageTracking } from './utils/UserPageTracking';
 
 function ProtectedRoute() {
   const navigate = useNavigate();
-
+  usePageTracking();
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     const email = user?.email;

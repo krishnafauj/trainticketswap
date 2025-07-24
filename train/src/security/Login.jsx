@@ -16,14 +16,11 @@ function Login() {
         password,
       });
 
-      console.log('Login success:', res.data);
       const { token, user, message } = res.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      alert(message); // or use toast/snackbar
-      console.log('User Info:', user);
-      alert('Login successful!');
+    
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error.response?.data || error.message);

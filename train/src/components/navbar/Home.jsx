@@ -1,5 +1,4 @@
 import React from "react";
-
 function Home() {
   const user = JSON.parse(localStorage.getItem("user"));
   const name = user ? user.name : "Guest";
