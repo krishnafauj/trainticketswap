@@ -29,6 +29,7 @@ function TrainDetails() {
                     },
                 });
                 setSwapRequests(res.data?.requests || []);
+                
             } catch (error) {
                 console.error('Failed to fetch swap requests:', error.response?.data || error.message);
                 setSwapRequests([]);
@@ -48,7 +49,8 @@ function TrainDetails() {
                 {train.train_name} ({train.train_no})
             </h1>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-6 mt-6">
+
                 {/* 🚉 LEFT: Train Route Visual */}
                 <div className="bg-white/10 rounded-2xl p-6 shadow-md border border-white/20">
                     <h2 className="text-xl font-semibold mb-4 text-center text-blue-400">Train Route</h2>
@@ -124,11 +126,13 @@ function TrainDetails() {
                                             <MessageCircle className="absolute top-3 right-3 text-blue-400 hover:text-blue-600" size={20} />
 
                                         </span>
-                                        <p className="text-white font-semibold">{req.name} ({req.age} yrs)</p>
+                                        <p className="text-white font-semibold">{req.name} ({req.age} yrs)</p> 
                                         <p className="text-sm text-gray-300">
                                             {req.from} {req.from_station} ➡️ {req.to} {req.to_statin} |<br></br> Seat: {req.seat} | Berth: {req.berth}
                                         </p>
-                                        <p className="text-sm text-blue-400 mt-1">Reason: {req.reason}</p>
+                                        <p className='text-sm mt-1'> Preffered Berth : {req.berth_pref}</p>
+                                        <p className="text-sm text-blue-400 ">Reason: {req.reason}</p>
+                                        {}
                                     </div>
                                 ))}
                             </div>

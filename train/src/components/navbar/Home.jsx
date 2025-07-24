@@ -5,7 +5,7 @@ function Home() {
   const name = user ? user.name : "Guest";
 
   return (
-    <div className="min-h-screen  flex items-center bg-gradient-to-br from-gray-900 to-black text-white  ">
+    <div className="h-screen flex items-center bg-gradient-to-br pt-20  p-8 mt-5 from-gray-900 to-black text-white  ">
       <div className="max-w-7xl mx-auto">
         {/* Greeting */}
         <h1 className="text-4xl font-bold text-center text-blue-400 mb-16">Hi, {name} 👋</h1>

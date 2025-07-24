@@ -43,7 +43,7 @@ const Pnrsearch = () => {
   };
 
   return (
-    <div className=" p-20 text-white flex items-center justify-center">
+    <div className=" p-20 min-h-screen text-black flex items-center bg-gradient-to-br  from-gray-900 to-black justify-center">
       <div className="w-full max-w-6xl rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 p-8 shadow-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Left Side: PNR Form */}

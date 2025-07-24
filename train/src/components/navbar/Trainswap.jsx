@@ -62,9 +62,7 @@ function Trainswap() {
     try {
       console.log('Sending request with data:', requestData);
       const response = await API.post('/trainswap', requestData);
-    
       const data = response.data; // ✅ no .json()
-      console.log('Response:', data);
       alert('request submitted')
       navigate('/')
 
@@ -126,7 +124,7 @@ function Trainswap() {
                 <option value="Upper">Upper</option>
                 <option value="Side Lower">Side Lower</option>
                 <option value="Side Upper">Side Upper</option>
-                <option value="No Preference">No Preference</option>
+                
               </select>
             </div>
             <div className="flex-1 min-w-[200px]">

@@ -11,8 +11,10 @@ export const submitSwapRequest = async (req, res) => {
       return res.status(400).json({ error: "train_no and date are required" });
     }
 
+    // Set deletion time (for TTL auto-expiry)
     const deletion_at = dayjs(date).add(5, 'day').toDate();
 
+    // Save the swap request in the correct dynamic collection
     const SwapModel = getSwapModelByTrainNo(train_no);
     const newRequest = await SwapModel.create({
       ...req.body,
@@ -20,26 +22,24 @@ export const submitSwapRequest = async (req, res) => {
       user_id,
       deletion_at,
     });
-
-    // Check if user already has a history document
-    let historyDoc = await UserSwapHistory.findOne({ user_id });
-
+    // Construct swap history entry (train_no + swap_request_id)
     const swapEntry = {
       swap_request_id: newRequest._id,
-      train_no,
-      date,
-      created_at: new Date()
+      train_no: train_no,
+      created_at: new Date(),
     };
 
+    // Find or create the user's swap history
+    const historyDoc = await UserSwapHistory.findOne({ user_id });
+
     if (historyDoc) {
-      // Push to existing history
       historyDoc.swap_requests.push(swapEntry);
       await historyDoc.save();
-    } else {
-      // Create new history document
+    } 
+    else {
       await UserSwapHistory.create({
         user_id,
-        swap_requests: [swapEntry]
+        swap_requests: [swapEntry],
       });
     }
 
@@ -47,6 +47,7 @@ export const submitSwapRequest = async (req, res) => {
       message: "Swap request submitted successfully",
       request_id: newRequest._id,
     });
+
   } catch (err) {
     console.error("Swap submission error:", err);
     res.status(500).json({ error: "Internal server error" });
