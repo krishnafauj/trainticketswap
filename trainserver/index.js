@@ -25,7 +25,7 @@ app.use('/', router); // ✅ Don't move this above the DB connection
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 initSocketServer(server);
-
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const HOST = '0.0.0.0'; // ✅ Required for Render
+server.listen(PORT, HOST, () => {
+  console.log(`Server running on http://${HOST}:${PORT}`);
 });
