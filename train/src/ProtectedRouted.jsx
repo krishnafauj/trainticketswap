@@ -3,8 +3,11 @@ import { useNavigate, Outlet } from 'react-router-dom';
 import Navbar from './components/navbar/Navbar';
 import { usePageTracking } from './utils/UserPageTracking';
 import CookieConsentBanner from './components/navbar/CookieConsentBanner';
-
+import { connectSocket } from './utils/Socket';
 function ProtectedRoute() {
+  useEffect(() => {
+    connectSocket(); // connects once when app loads
+  }, []);
   const navigate = useNavigate();
   usePageTracking();
   useEffect(() => {

@@ -12,7 +12,7 @@ import Navbar from './components/navbar/Navbar.jsx';
 import TrainDetails from './components/navbar/Traindetails.jsx';
 import Trainswap from './components/navbar/Trainswap.jsx';
 import PreviousSwaps from './components/navbar/PreviousSwaps;.jsx';
-
+import Chat from './components/navbar/Chat.jsx';
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <StrictMode>
@@ -24,6 +24,8 @@ createRoot(document.getElementById('root')).render(
             <Route path='/traindetails' element={<TrainDetails />} />
             <Route path='/traindetails/trainswap' element={<Trainswap />} />
             <Route path='/swaps' element={<PreviousSwaps />} />
+            <Route path='/chats' element={<Chat />} />
+
             
           </Route>
           <Route element={<PublicRoute />}>

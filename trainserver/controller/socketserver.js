@@ -16,10 +16,8 @@ export default function initSocketServer(server) {
 
   const onlineUsers = new Map();
   io.on('connection', (socket) => {
-    console.log('New client connected:', socket.id);
     socket.on('register', (email) => {
       onlineUsers.set(email, socket.id);
-      console.log(`User registered: ${email} with socket ${socket.id}`);
     });
 
     socket.on('send-message', ({ toEmail, fromEmail, message }) => {

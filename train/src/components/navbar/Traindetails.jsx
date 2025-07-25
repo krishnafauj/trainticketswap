@@ -67,7 +67,6 @@ function TrainDetails() {
                         ))}
                     </div>
                 </div>
-
                 {/* 📦 RIGHT: Swap Request Section */}
                 <div className="bg-white/10 rounded-2xl h-full p-6 shadow-md border border-white/20 flex flex-col gap-6">
                     {/* Swap Button */}
