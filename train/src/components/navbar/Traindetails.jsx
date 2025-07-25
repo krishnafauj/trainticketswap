@@ -40,7 +40,7 @@ function TrainDetails() {
 
         fetchSwaps();
     }, [selectedDate, train]);
-
+   
     if (!train) return <div className="text-white p-6">No train data found</div>;
 
     return (
@@ -121,7 +121,7 @@ function TrainDetails() {
                                         className="relative cursor-pointer bg-gray-800 p-4 rounded-xl border border-white/10 shadow hover:bg-gray-700 transition-all duration-200"
                                     >
                                         {/* Message icon in top-right */}
-                                        <span onClick={()=>{navigate('/')}}>
+                                        <span onClick={()=>{navigate('/chats',{ state: req })}}>
                                             <MessageCircle className="absolute top-3 right-3 text-blue-400 hover:text-blue-600" size={20} />
 
                                         </span>

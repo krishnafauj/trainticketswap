@@ -3,6 +3,7 @@ import { useNavigate, Outlet } from 'react-router-dom';
 import Navbar from './components/navbar/Navbar';
 import { usePageTracking } from './utils/UserPageTracking';
 import CookieConsentBanner from './components/navbar/CookieConsentBanner';
+import { Toaster } from 'react-hot-toast';
 import { connectSocket } from './utils/Socket';
 function ProtectedRoute() {
   useEffect(() => {
@@ -20,6 +21,7 @@ function ProtectedRoute() {
 
   return (
     <div className='' >
+      <Toaster position="top-right" reverseOrder={false} />
       <Navbar />
       <main className="">
         <Outlet />

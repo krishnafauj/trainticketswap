@@ -1,9 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getSocket } from '../../utils/Socket';
+import { useLocation } from 'react-router-dom';
 
-function UserChatPage({ selectedUser }) {
+function UserChatPage({ selectedUser: propSelectedUser }) {
+  const location = useLocation();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+
+  const bottomRef = useRef(null);
+
+  // Fallback to location.state.selectedUser if prop is not passed
+  const selectedUser = propSelectedUser || location.state?.selectedUser;
+
+  // Scroll to bottom on new messages
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
+  
+  }, []);
 
   useEffect(() => {
     const socket = getSocket();
@@ -42,11 +58,19 @@ function UserChatPage({ selectedUser }) {
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto">
+        {!selectedUser && (
+          <div className="text-center text-gray-400 mt-10">
+            Select a user to start chatting
+          </div>
+        )}
+
         {messages.map((msg, i) => (
           <div key={i} className="mb-2">
             <span className="font-semibold">{msg.from}:</span> {msg.message}
           </div>
         ))}
+
+        <div ref={bottomRef}></div>
       </div>
 
       <div className="p-4 border-t border-gray-700 bg-gray-800">

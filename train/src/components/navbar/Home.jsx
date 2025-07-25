@@ -1,8 +1,12 @@
 import React from "react";
+
 function Home() {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+  console.log(backendUrl)
   const user = JSON.parse(localStorage.getItem("user"));
   const name = user ? user.name : "Guest";
-
+ 
   return (
     <div className="min-h-screen flex items-center p-8 pt-25  bg-gradient-to-br   from-gray-900 to-black text-white  ">
       <div className="max-w-7xl mx-auto">
