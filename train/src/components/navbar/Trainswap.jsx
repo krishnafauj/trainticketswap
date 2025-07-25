@@ -61,7 +61,7 @@ function Trainswap() {
 
     try {
       console.log('Sending request with data:', requestData);
-      const response = await API.post('/trainswap', requestData);
+      const response = await API.post('/api/trainswap', requestData);
       const data = response.data; // ✅ no .json()
       alert('request submitted')
       navigate('/')

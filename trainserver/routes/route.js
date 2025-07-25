@@ -12,7 +12,7 @@ const router = express.Router();
 router.post('/login',login);
 router.post('/signup',signup);
 router.use(authenticateUser);
-router.get('/train',getTrainData); // search box me train find krne ko
+router.get('/train',getTrainData); 
 router.post('/trainswap',submitSwapRequest); // swap krne ki request ko
 router.get('/trainswap/train', getSwapRequestsByTrainAndDate); // for getting all swpa request for a specific train
 router.get('/acccounts/swaphistory', getSwapHistoryByUser); // for getting all swap requests of a user

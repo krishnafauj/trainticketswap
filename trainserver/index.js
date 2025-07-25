@@ -16,7 +16,7 @@ app.locals.trainDB = trainDB;
 app.use(express.json());
 
 // ✅ Routes after DB
-app.use('/', router); // ✅ Don't move this above the DB connection
+app.use('/api', router); // ✅ Don't move this above the DB connection
 
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
