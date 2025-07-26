@@ -39,7 +39,7 @@ function Navbar() {
 
   const fetchTrain = async (number) => {
     try {
-      const res = await API.get(`/api/train?trainQuery=${number}`);
+      const res = await API.get(`/train?trainQuery=${number}`);
       setResult(res.data);
     } catch (err) {
       console.error('API Error:', err);

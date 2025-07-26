@@ -22,7 +22,7 @@ function TrainDetails() {
         const fetchSwaps = async () => {
             setLoading(true);
             try {
-                const res = await API.get('/api/trainswap/train', {
+                const res = await API.get('/trainswap/train', {
                     params: {
                         train_no: train.train_no,
                         date: selectedDate,

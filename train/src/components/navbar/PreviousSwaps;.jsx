@@ -8,7 +8,7 @@ function PreviousSwaps() {
   useEffect(() => {
     const fetchMySwaps = async () => {
       try {
-        const res = await API.get('/api/acccounts/swaphistory'); // Fix: Make sure backend route is correct
+        const res = await API.get('/acccounts/swaphistory'); // Fix: Make sure backend route is correct
         const data = res.data.history || [];  // Fix: should be `history`, not `requests`
         setRequests(data);
         
