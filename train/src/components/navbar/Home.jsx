@@ -1,9 +1,7 @@
 import React from "react";
 
 function Home() {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-  console.log(backendUrl)
+ 
   const user = JSON.parse(localStorage.getItem("user"));
   const name = user ? user.name : "Guest";
  

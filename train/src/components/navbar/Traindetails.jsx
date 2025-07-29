@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
 import API from '../../utils/Axios';
+
 function TrainDetails() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -9,12 +10,14 @@ function TrainDetails() {
 
     const today = new Date();
     const minDate = new Date(today);
-    minDate.setDate(minDate.getDate() - 4); // 4 days earlier
+    minDate.setDate(minDate.getDate() - 4);
 
     const formatDate = (date) => date.toISOString().split('T')[0];
     const [selectedDate, setSelectedDate] = useState(formatDate(today));
     const [swapRequests, setSwapRequests] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const currentUser = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
         if (!train || !selectedDate) return;
@@ -29,7 +32,6 @@ function TrainDetails() {
                     },
                 });
                 setSwapRequests(res.data?.requests || []);
-                
             } catch (error) {
                 console.error('Failed to fetch swap requests:', error.response?.data || error.message);
                 setSwapRequests([]);
@@ -40,7 +42,67 @@ function TrainDetails() {
 
         fetchSwaps();
     }, [selectedDate, train]);
-   
+
+    const handleChatClick = async (req) => {
+        console.log(req);
+        if (currentUser._id === req.user_id) {
+            return alert("This request was sent by you!");
+        }
+
+        const token = localStorage.getItem('token');
+
+        try {
+            console.log("🔍 Step 1: Fetching friend list...");
+            const friendListRes = await API.get('/friends/get', {
+
+            });
+            const friends = friendListRes.data.friends || [];
+  
+            console.log("👥 Friend list received:", friends);
+
+            const isFriend = friends.some(friend => friend._id === req._id); // <-- use req._id
+
+            // Step 2: Add if not a friend
+            if (!isFriend) {
+                console.log("➕ Adding user as friend:", req._id);
+                await API.post('/friends/add', { userId: req._id });
+                console.log("✅ Friend added successfully.");
+            } else {
+                console.log("✅ Already friends, skipping add.");
+            }
+
+            // Step 3: Get friendshipId from backend
+            console.log("🔁 Fetching friendshipId between users...");
+            const friendshipRes = await API.post('/friends/find', {
+                userId: req._id
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const friendshipId = friendshipRes.data.friendshipId;
+            console.log("🆔 friendshipId fetched:", friendshipId);
+
+            // Step 4: Navigate to chat page
+            console.log("🚀 Navigating to /chats with friendshipId and otherUser...");
+            navigate('/chats', {
+                state: {
+                    friendshipId,
+                    otherUser: {
+                        _id: req.user_id,
+                        name: req.name,
+                        email: req.email
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error("❌ Error handling chat click:", error.response?.data || error.message);
+            alert("Failed to start chat.");
+        }
+
+    };
+
+
     if (!train) return <div className="text-white p-6">No train data found</div>;
 
     return (
@@ -51,7 +113,7 @@ function TrainDetails() {
 
             <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-6 mt-6">
 
-                {/* 🚉 LEFT: Train Route Visual */}
+                {/* 🚉 LEFT: Train Route */}
                 <div className="bg-white/10 rounded-2xl p-6 shadow-md border border-white/20">
                     <h2 className="text-xl font-semibold mb-4 text-center text-blue-400">Train Route</h2>
                     <div className="flex flex-col items-start space-y-6 relative ml-6">
@@ -67,13 +129,15 @@ function TrainDetails() {
                         ))}
                     </div>
                 </div>
+
                 {/* 📦 RIGHT: Swap Request Section */}
                 <div className="bg-white/10 rounded-2xl h-full p-6 shadow-md border border-white/20 flex flex-col gap-6">
-                    {/* Swap Button */}
+                    {/* Submit Button */}
                     <div className="flex items-center gap-4">
                         <p className="text-purple-400 font-medium">Have a seat you're willing to swap?</p>
                         <button
                             onClick={() => {
+
                                 navigate('/traindetails/trainswap', {
                                     state: {
                                         trainname: train.train_name,
@@ -95,11 +159,9 @@ function TrainDetails() {
                             type="date"
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
-                            min={formatDate(minDate)}   // 👈 allows 4 days before today
-                            // 👈 optional: restrict to today or earlier
+                            min={formatDate(minDate)}
                             className="px-4 py-2 bg-gray-800 text-white border border-white/30 rounded-lg"
                         />
-
                     </div>
 
                     {/* Swap Requests */}
@@ -115,31 +177,28 @@ function TrainDetails() {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {swapRequests.map((req, idx) => (
+
                                     <div
                                         key={idx}
-                                        onClick={() => console.log('Clicked request:', req)}
+                                        onClick={() => handleChatClick(req)}
+
                                         className="relative cursor-pointer bg-gray-800 p-4 rounded-xl border border-white/10 shadow hover:bg-gray-700 transition-all duration-200"
                                     >
-                                        {/* Message icon in top-right */}
-                                        <span onClick={()=>{navigate('/chats',{ state: req })}}>
-                                            <MessageCircle className="absolute top-3 right-3 text-blue-400 hover:text-blue-600" size={20} />
+                                        <MessageCircle className="absolute top-3 right-3 text-blue-400 hover:text-blue-600" size={20} />
 
-                                        </span>
-                                        <p className="text-white font-semibold">{req.name} ({req.age} yrs)</p> 
+                                        <p className="text-white font-semibold">{req.name} ({req.age} yrs)</p>
                                         <p className="text-sm text-gray-300">
-                                            {req.from} {req.from_station} ➡️ {req.to} {req.to_statin} |<br></br> Seat: {req.seat} | Berth: {req.berth}
+
+                                            {req.from} {req.from_station} ➡️ {req.to} {req.to_station} |<br />
+                                            Seat: {req.seat} | Berth: {req.berth}
                                         </p>
-                                        <p className='text-sm mt-1'> Preffered Berth : {req.berth_pref}</p>
-                                        <p className="text-sm text-blue-400 ">Reason: {req.reason}</p>
-                                        {}
+                                        <p className='text-sm mt-1'>Preferred Berth: {req.berth_pref}</p>
+                                        <p className="text-sm text-blue-400">Reason: {req.reason}</p>
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
-
-                    {/* 🔗 API Info */}
-
                 </div>
             </div>
         </div>

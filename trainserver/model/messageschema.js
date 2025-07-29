@@ -1,18 +1,34 @@
 import mongoose from 'mongoose';
 
+// Single message entry (no _id for each message)
 const messageSchema = new mongoose.Schema({
-  sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  message: String,
-  timestamp: { type: Date, default: Date.now },
-});
+  senderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now
+  }
+}, { _id: false });
 
-const chatRoomSchema = new mongoose.Schema({
-  user_1: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  user_2: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  train_no: String,
-  date: String,
+const messageThreadSchema = new mongoose.Schema({
+  friendshipId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Friendship',
+    required: true,
+    unique: true
+  },
   messages: [messageSchema],
-  createdAt: { type: Date, default: Date.now },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-export default mongoose.model('ChatRoom', chatRoomSchema);
+export default mongoose.model('MessageThread', messageThreadSchema);

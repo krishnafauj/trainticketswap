@@ -17,6 +17,7 @@ export default function initSocketServer(server) {
   const onlineUsers = new Map();
   io.on('connection', (socket) => {
     socket.on('register', (email) => {
+      console.log("connection build");
       onlineUsers.set(email, socket.id);
     });
 
