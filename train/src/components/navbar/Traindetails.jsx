@@ -64,8 +64,8 @@ function TrainDetails() {
 
             // Step 2: Add if not a friend
             if (!isFriend) {
-                console.log("➕ Adding user as friend:", req._id);
-                await API.post('/friends/add', { userId: req._id });
+                console.log("➕ Adding user as friend:", req.user_id);
+                await API.post('/friends/add', { userId: req.user_id });
                 console.log("✅ Friend added successfully.");
             } else {
                 console.log("✅ Already friends, skipping add.");
