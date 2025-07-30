@@ -8,8 +8,7 @@ import { getSwapRequestsByTrainAndDate } from '../controller/getTraindetailsbyda
 import { getSwapHistoryByUser } from '../controller/getswaprequestbyuser.js';
 import addFriend from '../controller/addfriend.js';
 import {  getFriends } from '../controller/getFriends.js';
-import { findFriendship } from '../controller/findFriendSchemaid.js';
-
+import {findFriendship} from '../controller/findFriendSchemaid.js'
 const router = express.Router();
 
 // Public routes

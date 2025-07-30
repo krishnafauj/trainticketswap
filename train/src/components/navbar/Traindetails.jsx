@@ -57,33 +57,23 @@ function TrainDetails() {
 
             });
             const friends = friendListRes.data.friends || [];
-  
-            console.log("👥 Friend list received:", friends);
 
-            const isFriend = friends.some(friend => friend._id === req._id); // <-- use req._id
+
+            const isFriend = friends.some(friend => friend._id === req.user_id);
 
             // Step 2: Add if not a friend
             if (!isFriend) {
-                console.log("➕ Adding user as friend:", req.user_id);
+               
                 await API.post('/friends/add', { userId: req.user_id });
-                console.log("✅ Friend added successfully.");
-            } else {
-                console.log("✅ Already friends, skipping add.");
-            }
-
-            // Step 3: Get friendshipId from backend
-            console.log("🔁 Fetching friendshipId between users...");
+                
+            } 
             const friendshipRes = await API.post('/friends/find', {
-                userId: req._id
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
+                userId: req.user_id
             });
 
             const friendshipId = friendshipRes.data.friendshipId;
             console.log("🆔 friendshipId fetched:", friendshipId);
 
-            // Step 4: Navigate to chat page
-            console.log("🚀 Navigating to /chats with friendshipId and otherUser...");
             navigate('/chats', {
                 state: {
                     friendshipId,

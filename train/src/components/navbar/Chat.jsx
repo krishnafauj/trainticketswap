@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getSocket } from '../../utils/Socket';
 import API from '../../utils/Axios';
 
 function Chat() {
+  const location = useLocation();
   const [validFriends, setValidFriends] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(location.state?.otherUser || null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
 
+  // Fetch friends and validate
   useEffect(() => {
     const fetchFriendsAndValidate = async () => {
       try {
@@ -29,6 +32,14 @@ function Chat() {
         const filtered = validations.filter(f => f !== null);
         setValidFriends(filtered);
         console.log("✅ Validated friends:", filtered);
+
+        // Auto-select friend if redirected from another page
+        if (location.state?.otherUser) {
+          const autoFriend = filtered.find(f => f._id === location.state.otherUser._id);
+          if (autoFriend) {
+            setSelectedUser(autoFriend);
+          }
+        }
       } catch (err) {
         console.error("❌ Error validating friends:", err.message);
       }
@@ -37,6 +48,7 @@ function Chat() {
     fetchFriendsAndValidate();
   }, []);
 
+  // Listen to incoming messages
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
@@ -52,8 +64,16 @@ function Chat() {
     };
   }, []);
 
+  // Auto-scroll chat box to bottom
+  useEffect(() => {
+    const chatBox = document.getElementById("chat-box");
+    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+  }, [messages]);
+
+  // Send a message
   const sendMessage = () => {
     if (!message.trim() || !selectedUser) return;
+
     const socket = getSocket();
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -81,7 +101,7 @@ function Chat() {
                 key={friend._id}
                 onClick={() => {
                   setSelectedUser(friend);
-                  setMessages([]); // reset chat history
+                  setMessages([]); // clear current messages
                 }}
                 className={`cursor-pointer py-2 px-3 rounded mb-2 hover:bg-gray-700 ${
                   selectedUser && selectedUser._id === friend._id ? 'bg-gray-700' : ''
@@ -94,13 +114,15 @@ function Chat() {
         )}
       </div>
 
-     
+      {/* Chat Section */}
       <div className="flex-1 flex flex-col">
+        {/* Header */}
         <div className="p-4 border-b border-gray-700 bg-gray-800 font-semibold text-lg">
           {selectedUser ? selectedUser.name : 'No conversation selected'}
         </div>
 
-        <div className="flex-1 p-4 overflow-y-auto">
+        {/* Messages */}
+        <div className="flex-1 p-4 overflow-y-auto" id="chat-box">
           {!selectedUser && (
             <div className="text-center text-gray-400 mt-10">
               Select a friend to start chatting
@@ -114,6 +136,7 @@ function Chat() {
           ))}
         </div>
 
+        {/* Input Box */}
         <div className="p-4 border-t border-gray-700 bg-gray-800">
           <input
             type="text"
