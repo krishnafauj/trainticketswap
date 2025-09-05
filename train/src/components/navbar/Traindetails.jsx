@@ -54,15 +54,13 @@ function TrainDetails() {
         try {
             console.log("🔍 Step 1: Fetching friend list...");
             const friendListRes = await API.get('/friends/get', {
-
             });
             const friends = friendListRes.data.friends || [];
 
-
             const isFriend = friends.some(friend => friend._id === req.user_id);
-
-            // Step 2: Add if not a friend
+          
             if (!isFriend) {
+                console.log("it is not a friends friend")
                
                 await API.post('/friends/add', { userId: req.user_id });
                 
@@ -70,10 +68,9 @@ function TrainDetails() {
             const friendshipRes = await API.post('/friends/find', {
                 userId: req.user_id
             });
-
-            const friendshipId = friendshipRes.data.friendshipId;
+           
+            const friendshipId = friendshipRes.data._id;
             console.log("🆔 friendshipId fetched:", friendshipId);
-
             navigate('/chats', {
                 state: {
                     friendshipId,

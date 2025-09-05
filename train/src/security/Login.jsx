@@ -6,25 +6,30 @@ function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    console.log('Login started for:', email);
 
     try {
-      const res = await API.post('/login', {
-        email,
-        password,
-      });
+      const res = await API.post('/login', { email, password });
+      const { token, user } = res.data;
 
-      const { token, user, message } = res.data;
+      console.log('Login successful:', user);
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-    
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error.response?.data || error.message);
-      alert(error.response?.data?.message || 'Login failed');
+      alert(
+        error.response?.data?.message ||
+          'Login failed. If the server just started, it may take 2–3 minutes to be ready.'
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,6 +46,7 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
+              required
             />
           </div>
           <div>
@@ -51,23 +57,27 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
+              required
             />
           </div>
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-semibold py-3 rounded-xl shadow-lg"
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <p  className="text-center text-sm text-gray-400 mt-6">
-          Don’t have an account?{" "}
+        <p className="text-center text-sm text-gray-400 mt-6">
+          Don’t have an account?{' '}
           <span
-            onClick=  {() => navigate('/signup')}
+            onClick={() => navigate('/signup')}
             className="text-blue-400 hover:underline cursor-pointer"
           >
             Sign up
           </span>
+        </p>
+        <p className="text-center text-sm text-yellow-300 mt-4">
+          ⚠️ If the server just started, it may take 2–3 minutes to be ready.
         </p>
       </div>
     </div>

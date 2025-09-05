@@ -1,29 +1,33 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // only if you're using React Router
+import { useNavigate } from 'react-router-dom';
 import API from '../utils/Axios';
 
 function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // hook for navigation
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    console.log('Signup started for:', email);
 
     try {
-      const res = await API.post('/signup', {
-        name,
-        email,
-        password,
-      });
+      const res = await API.post('/signup', { name, email, password });
+      console.log('Signup successful:', res.data);
 
       alert(res.data.message || 'Signup successful');
-      navigate('/login'); // ✅ redirect after success
+      navigate('/login'); // redirect to login after success
     } catch (error) {
-      console.error('Signup error:', error);
-      alert(error.response?.data?.message || 'Signup failed');
+      console.error('Signup failed:', error.response?.data || error.message);
+      alert(
+        error.response?.data?.message ||
+        'Signup failed. If the server just started, it may take 2–3 minutes to be ready.'
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,11 +73,20 @@ function Signup() {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-semibold py-3 rounded-xl shadow-lg"
           >
-            Sign Up
+            {loading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
         <p className="text-center text-sm text-gray-400 mt-6">
-          Already have an account? <a href="/login" className="text-blue-400 hover:underline">Log in</a>
+          Already have an account?{' '}
+          <span
+            onClick={() => navigate('/login')}
+            className="text-blue-400 hover:underline cursor-pointer"
+          >
+            Log in
+          </span>
+        </p>
+        <p className="text-center text-sm text-yellow-300 mt-4">
+          ⚠️ If the server just started, it may take 2–3 minutes to be ready.
         </p>
       </div>
     </div>
