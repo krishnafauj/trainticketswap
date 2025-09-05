@@ -6,7 +6,6 @@ export const findFriendship = async (req, res) => {
   const userA = req.body.userId;
   
   const userB = req.user.id;
- 
   if (!userA || !userB) {
     console.error("❌ Missing user IDs in request");
     return res.status(400).json({ error: 'Both user IDs are required' });
@@ -32,7 +31,7 @@ export const findFriendship = async (req, res) => {
     }
 
  
-
+    console.log( friendship)
     res.status(200).json(friendship);
   } catch (error) {
     

@@ -9,6 +9,7 @@ import { getSwapHistoryByUser } from '../controller/getswaprequestbyuser.js';
 import addFriend from '../controller/addfriend.js';
 import {  getFriends } from '../controller/getFriends.js';
 import {findFriendship} from '../controller/findFriendSchemaid.js'
+import message_get from '../controller/message.js';
 const router = express.Router();
 
 // Public routes
@@ -29,5 +30,6 @@ router.get('/acccounts/swaphistory', getSwapHistoryByUser);
 router.get('/friends/get', getFriends);    // ✅ added for retrieving friendshipId
 router.post('/friends/add', addFriend);          // ✅ corrected to RESTful path
 router.post('/friends/find', findFriendship);
+router.get('/messages/:friendshipId',message_get);
 
 export default router;

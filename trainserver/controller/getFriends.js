@@ -1,46 +1,45 @@
 import Friendship from '../model/friendshipSchema.js';
 import User from '../model/user.js';
 import mongoose from 'mongoose';
+
 export const getFriends = async (req, res) => {
   try {
     const userId = req.user?.id || req.user?.user_id;
 
-    console.log("🔍 Using userId:", userId, typeof userId);
-
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      console.error("❌ Invalid ObjectId received:", userId);
       return res.status(400).json({ message: 'Invalid user id' });
     }
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
-    console.log("🔍 Fetching friends for user:", userObjectId);
 
+    // Find all accepted friendships
     const friendships = await Friendship.find({
       $or: [{ user1: userObjectId }, { user2: userObjectId }],
       status: 'accepted'
     });
 
-    console.log("🔗 Friendships found:");
-    friendships.forEach((f, i) => {
-      console.log(`  ${i + 1}. [${f.user1}] ⇄ [${f.user2}]`);
+    // Map friend user IDs and keep track of friendshipId
+    const friendMappings = friendships.map(f => {
+      const friendId = f.user1.equals(userObjectId) ? f.user2 : f.user1;
+      return { friendId, friendshipId: f._id };
     });
 
-    const friendIds = friendships.map(f =>
-      f.user1.equals(userObjectId) ? f.user2 : f.user1
-    );
+    const friendIds = friendMappings.map(f => f.friendId);
 
-    console.log("📦 Extracted friend ObjectIds:", friendIds);
-
+    // Fetch friend details
     const friends = await User.find({ _id: { $in: friendIds } }).select('_id name email');
 
-    console.log("✅ Final friends fetched:");
-    friends.forEach((f, i) => {
-      console.log(`  ${i + 1}. ${f.name} (${f.email})`);
+    // Attach friendshipId to friend data
+    const friendsWithFriendshipId = friends.map(friend => {
+      const mapping = friendMappings.find(m => m.friendId.equals(friend._id));
+      return {
+        ...friend.toObject(),
+        friendshipId: mapping ? mapping.friendshipId : null
+      };
     });
 
-    return res.status(200).json({ friends });
+    return res.status(200).json({ friends: friendsWithFriendshipId });
   } catch (err) {
-    console.error("❌ Error fetching friends:", err);
     return res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };

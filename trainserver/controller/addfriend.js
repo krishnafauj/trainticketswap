@@ -3,14 +3,14 @@ import mongoose from 'mongoose';
 
 const addFriend = async (req, res) => {
   try {
-    const user1 = req.user.id;  // ✅ Use consistent field: id from JWT
+    console.log("request received");
+    const user1 = req.user.id;  
     const user2 = req.body.userId;
-
-
+    console.log(user2);
+    console.log(user1)
     if (user1 === user2) {
       return res.status(400).json({ message: 'Cannot add yourself as a friend' });
     }
-
     const u1Obj = new mongoose.Types.ObjectId(user1);
     const u2Obj = new mongoose.Types.ObjectId(user2);
 
