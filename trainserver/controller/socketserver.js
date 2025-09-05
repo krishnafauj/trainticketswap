@@ -19,33 +19,31 @@ export default function initSocketServer(server) {
   const onlineUsers = new Map();
 
   io.on('connection', (socket) => {
-    console.log(`🔌 New client connected: ${socket.id}`);
 
     // 🔹 Register user
     socket.on('register', async (email) => {
       if (!email) return;
       onlineUsers.set(email, socket.id);
-      console.log(`✅ Registered user: ${email} with socket ID: ${socket.id}`);
+      console.log(`✅ User registered: ${email} with socket ID: ${socket.id}`);
       socket.emit('registered', { email, socketId: socket.id });
 
-      // 🔹 Deliver offline messages
       try {
         const offlineMessages = await OfflineMessage.find({ toEmail: email });
-        console.log(`📨 Found ${offlineMessages.length} offline messages for ${email}`);
-
-        offlineMessages.forEach(msg => {
-          console.log(`➡️ Delivering offline message from ${msg.fromEmail} to ${email}`);
-          socket.emit('receive-message', {
-            fromEmail: msg.fromEmail,
-            toEmail: msg.toEmail,
-            message: msg.message,
-            friendshipId: msg.friendshipId
+        if (offlineMessages.length > 0) {
+          console.log(`📨 Delivering ${offlineMessages.length} offline messages to ${email}`);
+          offlineMessages.forEach(msg => {
+            socket.emit('receive-message', {
+              fromEmail: msg.fromEmail,
+              toEmail: msg.toEmail,
+              message: msg.message,
+              friendshipId: msg.friendshipId
+            });
           });
-        });
 
-        // Remove delivered offline messages
-        await OfflineMessage.deleteMany({ toEmail: email });
-        console.log(`🗑️ Cleared offline messages for ${email}`);
+          // Remove delivered offline messages
+          await OfflineMessage.deleteMany({ toEmail: email });
+          console.log(`🗑️ Offline messages for ${email} deleted after delivery`);
+        }
       } catch (err) {
         console.error("❌ Error delivering offline messages:", err);
       }
@@ -54,26 +52,27 @@ export default function initSocketServer(server) {
     // 🔹 Send message
     socket.on('send-message', async ({ toEmail, fromEmail, message, friendshipId }) => {
       if (!toEmail || !fromEmail || !message || !friendshipId) return;
-      console.log(`✉️ Sending message from ${fromEmail} to ${toEmail}: "${message}"`);
 
       const targetSocketId = onlineUsers.get(toEmail);
 
       if (targetSocketId) {
-        console.log(`💬 User ${toEmail} is online. Sending message instantly.`);
+        // User online → send instantly
         io.to(targetSocketId).emit('receive-message', {
           fromEmail,
           toEmail,
           message,
           friendshipId
         });
+        console.log(`📤 Message sent from ${fromEmail} to ${toEmail} (online)`);
 
         socket.emit('message-sent', { toEmail, fromEmail, message, friendshipId, status: 'delivered' });
       } else {
-        console.log(`📥 User ${toEmail} is offline. Saving message.`);
+        // User offline → save message
+        console.log(`📥 ${toEmail} is offline. Saving message from ${fromEmail}`);
         try {
           await OfflineMessage.create({ friendshipId, fromEmail, toEmail, message });
+          console.log(`💾 Offline message stored for ${toEmail}`);
           socket.emit('message-sent', { toEmail, fromEmail, message, friendshipId, status: 'offline' });
-          console.log(`✅ Offline message saved for ${toEmail}`);
         } catch (err) {
           console.error("❌ Error saving offline message:", err);
         }
@@ -82,11 +81,10 @@ export default function initSocketServer(server) {
 
     // 🔹 Disconnect
     socket.on('disconnect', () => {
-      console.log(`❌ Client disconnected: ${socket.id}`);
       for (const [email, id] of onlineUsers.entries()) {
         if (id === socket.id) {
           onlineUsers.delete(email);
-          console.log(`🗑️ Removed user ${email} from online users`);
+          console.log(`🗑️ Removed user ${email} from online users on disconnect`);
           break;
         }
       }
